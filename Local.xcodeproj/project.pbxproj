@@ -10,9 +10,22 @@
 		739B9A3B2CD0E37900356654 /* Local.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Local.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		735FA8C12CD1680E00554894 /* Exceptions for "Local" folder in "Local" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 739B9A3A2CD0E37900356654 /* Local */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		739B9A3D2CD0E37900356654 /* Local */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				735FA8C12CD1680E00554894 /* Exceptions for "Local" folder in "Local" target */,
+			);
 			path = Local;
 			sourceTree = "<group>";
 		};
@@ -254,6 +267,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"Local/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Local/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -282,6 +296,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"Local/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Local/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
