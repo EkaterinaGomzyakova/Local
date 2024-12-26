@@ -13,10 +13,10 @@ struct AboutView: View {
     var body: some View {
         NavigationView {
             VStack {
-                Text("About This App")
+                Text("О приложении")
                     .font(.title)
                     .padding()
-                Text("This is a sample app to demonstrate SwiftUI and customization.")
+                Text("Наше приложение объединяет студентов Вышки")
                     .padding()
                 Spacer()
             }

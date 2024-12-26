@@ -16,8 +16,6 @@ class ThemeManager: ObservableObject {
                 currentTheme = Themes.light
             case "dark":
                 currentTheme = Themes.dark
-            case "blue":
-                currentTheme = Themes.blue
             default:
                 currentTheme = Themes.light
             }
@@ -32,8 +30,6 @@ class ThemeManager: ObservableObject {
             currentTheme = Themes.light
         case "dark":
             currentTheme = Themes.dark
-        case "blue":
-            currentTheme = Themes.blue
         default:
             currentTheme = Themes.light
         }
