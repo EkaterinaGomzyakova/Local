@@ -7,12 +7,25 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		73D96CB82CDB8B790071ADCF /* TestApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		73EA56442DD4873B00B283A6 /* TestApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		73DA4ED92DDDEE190006FC55 /* Exceptions for "TestApp" folder in "TestApp" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 73D96CB72CDB8B790071ADCF /* TestApp */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		73D96CBA2CDB8B790071ADCF /* TestApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				73DA4ED92DDDEE190006FC55 /* Exceptions for "TestApp" folder in "TestApp" target */,
+			);
 			path = TestApp;
 			sourceTree = "<group>";
 		};
@@ -33,16 +46,8 @@
 			isa = PBXGroup;
 			children = (
 				73D96CBA2CDB8B790071ADCF /* TestApp */,
-				73D96CB92CDB8B790071ADCF /* Products */,
+				73EA56442DD4873B00B283A6 /* TestApp.app */,
 			);
-			sourceTree = "<group>";
-		};
-		73D96CB92CDB8B790071ADCF /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				73D96CB82CDB8B790071ADCF /* TestApp.app */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -64,10 +69,8 @@
 				73D96CBA2CDB8B790071ADCF /* TestApp */,
 			);
 			name = TestApp;
-			packageProductDependencies = (
-			);
 			productName = TestApp;
-			productReference = 73D96CB82CDB8B790071ADCF /* TestApp.app */;
+			productReference = 73EA56442DD4873B00B283A6 /* TestApp.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -95,7 +98,7 @@
 			mainGroup = 73D96CAF2CDB8B790071ADCF;
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
-			productRefGroup = 73D96CB92CDB8B790071ADCF /* Products */;
+			productRefGroup = 73D96CAF2CDB8B790071ADCF;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -254,6 +257,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"TestApp/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TestApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -282,6 +286,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"TestApp/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TestApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
