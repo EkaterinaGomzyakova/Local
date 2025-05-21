@@ -1,151 +1,145 @@
+// HomeView.swift
+
 import SwiftUI
 
 struct HomeView: View {
-    // события
-    @Binding var cards: [EventCard]
-    // встречи
-    @Binding var meets: [MeetCard]
+    @StateObject private var vm = HomeViewModel()
 
-    // сегмент «События / Встречи»
     @State private var selectedSegment = 0
     private let segments = ["События", "Встречи"]
 
     var body: some View {
         NavigationView {
-            ScrollView {
-                VStack(spacing: 24) {
-                    // MARK: — Header
-                    HStack {
-                        Image("avatar_placeholder")
-                            .resizable()
-                            .frame(width: 32, height: 32)
-                            .clipShape(Circle())
-                        Spacer()
-                        Text("Вспышка")
-                            .font(.custom("Chalkduster", size: 24))
-                        Spacer()
-                        Button {
-                            // TODO: уведомления
-                        } label: {
-                            Image(systemName: "bell")
-                                .font(.title2)
-                                .foregroundColor(.primary)
-                        }
+            ZStack {
+                ScrollView {
+                    VStack(spacing: 24) {
+                        header
+                        banner
                     }
-                    .padding(.horizontal)
-                    .padding(.top, 8)
 
-                    // MARK: — Баннер/коллаж
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 30)
-                            .fill(Color.purple.opacity(0.3))
-                        // … ваш коллаж …
-                    }
-                    .frame(height: 200)
-                    .padding(.horizontal)
-                }
-
-                // MARK: — Список с «залипающим» переключателем
-                LazyVStack(spacing: 24, pinnedViews: [.sectionHeaders]) {
-                    Section(header:
-                        Picker("", selection: $selectedSegment) {
-                            ForEach(segments.indices, id: \.self) { idx in
-                                Text(segments[idx]).tag(idx)
+                    LazyVStack(spacing: 24, pinnedViews: [.sectionHeaders]) {
+                        Section(header: segmentPicker) {
+                            if selectedSegment == 0 {
+                                eventsSection
+                            } else {
+                                meetsSection
                             }
                         }
-                        .pickerStyle(SegmentedPickerStyle())
-                        .padding(.horizontal)
-                        .padding(.bottom, 8)
+                    }
+                    .padding(.bottom, 16)
+                }
+
+                if vm.isLoading {
+                    ProgressView()
+                        .padding(12)
                         .background(Color(.systemBackground))
-                    ) {
-                        if selectedSegment == 0 {
-                            // СЕГМЕНТ «СОБЫТИЯ»
-                            SectionHeader(title: "ДЛЯ ТЕБЯ")
-                            if let first = cards.first {
-                                EventRow(event: first)
-                            }
-
-                            SectionHeader(title: "ПОПУЛЯРНЫЕ")
-                            ForEach(cards.dropFirst().prefix(2), id: \.id) { event in
-                                EventRow(event: event)
-                            }
-
-                            SectionHeader(title: "НОВЫЕ")
-                            ForEach(cards.dropFirst(3).prefix(2), id: \.id) { event in
-                                EventRow(event: event)
-                            }
-                        } else {
-                            // СЕГМЕНТ «ВСТРЕЧИ»
-                            SectionHeader(title: "ДЛЯ ТЕБЯ")
-                            ForEach(meets, id: \.id) { meet in
-                                MeetRow(meet: meet)
-                            }
-                        }
-                    }
+                        .cornerRadius(8)
+                        .shadow(radius: 4)
                 }
-                .padding(.bottom, 16)
             }
             .navigationBarHidden(true)
+            .onAppear { vm.loadAll() }
+            .alert("Ошибка", isPresented: Binding(
+                get: { vm.errorMessage != nil },
+                set: { _ in vm.errorMessage = nil }
+            )) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text(vm.errorMessage ?? "")
+            }
+        }
+    }
+
+    // MARK: — UI Helpers
+
+    private var header: some View {
+        HStack {
+            Image("avatar_placeholder")
+                .resizable().frame(width: 32, height: 32).clipShape(Circle())
+            Spacer()
+            Text("Вспышка").font(.custom("Chalkduster", size: 24))
+            Spacer()
+            Button { /* оповещения */ } label: {
+                Image(systemName: "bell").font(.title2).foregroundColor(.primary)
+            }
+        }
+        .padding(.horizontal).padding(.top, 8)
+    }
+
+    private var banner: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 30)
+                .fill(Color.purple.opacity(0.3))
+            // … сюда коллаж …
+        }
+        .frame(height: 200).padding(.horizontal)
+    }
+
+    private var segmentPicker: some View {
+        Picker("", selection: $selectedSegment) {
+            ForEach(segments.indices, id: \.self) { i in
+                Text(segments[i]).tag(i)
+            }
+        }
+        .pickerStyle(SegmentedPickerStyle())
+        .padding(.horizontal).padding(.bottom, 8)
+        .background(Color(.systemBackground))
+    }
+
+    private var eventsSection: some View {
+        Group {
+            SectionHeader(title: "ДЛЯ ТЕБЯ")
+            if let first = vm.events.first {
+                EventRow(event: first)
+            }
+            SectionHeader(title: "ПОПУЛЯРНЫЕ")
+            ForEach(vm.events.dropFirst().prefix(2), id: \.id) { e in
+                EventRow(event: e)
+            }
+            SectionHeader(title: "НОВЫЕ")
+            ForEach(vm.events.dropFirst(3).prefix(2), id: \.id) { e in
+                EventRow(event: e)
+            }
+        }
+    }
+
+    private var meetsSection: some View {
+        Group {
+            SectionHeader(title: "ДЛЯ ТЕБЯ")
+            ForEach(vm.meets, id: \.id) { m in
+                MeetRow(meet: m)
+            }
         }
     }
 }
 
-// Заголовок секции
+// MARK: — Helper Views
+
 private struct SectionHeader: View {
     let title: String
     var body: some View {
-        Text(title)
-            .font(.headline)
-            .padding(.horizontal)
+        Text(title).font(.headline).padding(.horizontal)
     }
 }
 
-// Ряд события
 private struct EventRow: View {
-    let event: EventCard
+    let event: Event
     var body: some View {
-        NavigationLink(destination: EventDetailView(event: event)) {
-            EventCardView(eventcard: event)
+        NavigationLink(destination: /* ваш EventDetailView */ Text(event.name)) {
+            /* ваш EventCardView */ Text(event.name)
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
         .padding(.horizontal)
     }
 }
 
-// Ряд встречи
 private struct MeetRow: View {
-    let meet: MeetCard
+    let meet: Meet
     var body: some View {
-        NavigationLink(destination: MeetDetailView(meet: meet)) {
-            MeetCardView(meet: meet)
+        NavigationLink(destination: /* ваш MeetDetailView */ Text(meet.topic)) {
+            /* ваш MeetCardView */ Text(meet.topic)
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
         .padding(.horizontal)
     }
 }
-
-// Превью
-struct HomeView_Previews: PreviewProvider {
-    static var previews: some View {
-        HomeView(
-            cards: .constant([
-                EventCard(
-                    title: "Дизайн для потребителей в эпоху перемен",
-                    description: "...",
-                    tags: ["Дизайн"],
-                    date: Date(),
-                    imageName: "eventImage",
-                    username: "dimaast"
-                )
-            ]),
-            meets: .constant([
-                MeetCard(
-                    description: "Обсуждаем новые фичи",
-                    date: Date(),
-                    participants: 10
-                )
-            ])
-        )
-    }
-}
-

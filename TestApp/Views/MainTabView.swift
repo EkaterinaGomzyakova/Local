@@ -1,34 +1,15 @@
+// MainTabView.swift
+
 import SwiftUI
 
 struct MainTabView: View {
-    // 1️⃣ Менеджер избранного
-    @StateObject private var favs = FavoritesManager()
-    // 2️⃣ Текущая вкладка
-    @State private var selectedTab: Int = 0
-    // 3️⃣ Все события
-    @State private var cards: [EventCard] = [
-        EventCard(
-            title: "Выставка современных художников",
-            description: "Погрузитесь в мир современного искусства!",
-            tags: ["🎨 Искусство","🖌️ Выставка"],
-            date: Date(),
-            imageName: "eventImage",
-            username: "User1"
-        )
-    ]
-    // 4️⃣ Все встречи
-    @State private var meets: [MeetCard] = [
-        MeetCard(
-            description: "Обсуждаем новые возможности",
-            date: Date().addingTimeInterval(3600),
-            participants: 12
-        )
-    ]
+    @StateObject private var favs      = FavoritesManager()
+    @State private var selectedTab     = 0
 
     var body: some View {
         ZStack(alignment: .bottom) {
             TabView(selection: $selectedTab) {
-                HomeView(cards: $cards, meets: $meets)
+                HomeView()
                     .environmentObject(favs)
                     .tag(0)
 
@@ -36,7 +17,7 @@ struct MainTabView: View {
                     .environmentObject(favs)
                     .tag(1)
 
-                AddView(cards: $cards)
+                AddView()
                     .environmentObject(favs)
                     .tag(2)
 
@@ -51,14 +32,14 @@ struct MainTabView: View {
             .edgesIgnoringSafeArea(.bottom)
 
             // Кастомный таб-бар
-            VStack(spacing: 0) {
+            VStack {
                 Spacer()
-                HStack(spacing: 0) {
-                    TabBarItem(imageName: "house", isSelected: selectedTab == 0) { selectedTab = 0 }
+                HStack {
+                    TabBarItem(imageName: "house",          isSelected: selectedTab == 0) { selectedTab = 0 }
                     TabBarItem(imageName: "magnifyingglass", isSelected: selectedTab == 1) { selectedTab = 1 }
-                    TabBarItem(imageName: "plus", isSelected: selectedTab == 2) { selectedTab = 2 }
-                    TabBarItem(imageName: "star", isSelected: selectedTab == 3) { selectedTab = 3 }
-                    TabBarItem(imageName: "person", isSelected: selectedTab == 4) { selectedTab = 4 }
+                    TabBarItem(imageName: "plus",           isSelected: selectedTab == 2) { selectedTab = 2 }
+                    TabBarItem(imageName: "star",           isSelected: selectedTab == 3) { selectedTab = 3 }
+                    TabBarItem(imageName: "person",         isSelected: selectedTab == 4) { selectedTab = 4 }
                 }
                 .padding(.horizontal)
                 .background(Color.gray.opacity(0.1))
@@ -69,7 +50,7 @@ struct MainTabView: View {
     }
 }
 
-struct TabBarItem: View {
+private struct TabBarItem: View {
     let imageName: String
     let isSelected: Bool
     let action: () -> Void
@@ -84,9 +65,10 @@ struct TabBarItem: View {
     }
 }
 
+// MARK: — Preview
+
 struct MainTabView_Previews: PreviewProvider {
     static var previews: some View {
         MainTabView()
     }
 }
-

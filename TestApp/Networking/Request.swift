@@ -1,49 +1,38 @@
-//
-//  Request.swift
-//  TestApp
-//
-//  Created by Kate on 26.12.2024.
-//
+// Networking/Request.swift
 
 import Foundation
 
-/// HTTP-методы
 public enum HTTPMethod: String {
-    case get     = "GET"
-    case post    = "POST"
-    case put     = "PUT"
-    case delete  = "DELETE"
-    case patch   = "PATCH"
-    case options = "OPTIONS"
+    case get, post, put, delete, patch, options
 }
 
-/// Описание одного сетевого запроса
 public struct Request {
     public let endpoint: Endpoint
     public let method: HTTPMethod
     public let parameters: [String: String]?
     public let timeout: TimeInterval
     public let body: Data?
+    public let headers: [String: String]
 
-    /// Инициализатор: в качестве параметров можно передать свои дополнительные query-параметры и/или тело
     public init(
         endpoint: Endpoint,
         method: HTTPMethod = .get,
-        parameters: [String: String]? = nil,
+        parameters: [String:String]? = nil,
         timeout: TimeInterval = 60,
-        body: Data? = nil
+        body: Data? = nil,
+        headers: [String:String] = [:]
     ) {
-        // Сначала забираем параметры из самого endpoint
-        var merged = endpoint.parameters ?? [:]
-        // Затем «накладываем» пользовательские
-        if let params = parameters {
-            params.forEach { merged[$0.key] = $0.value }
-        }
         self.endpoint   = endpoint
         self.method     = method
-        self.parameters = merged.isEmpty ? nil : merged
         self.timeout    = timeout
         self.body       = body
+        // merge endpoint.parameters + passed parameters
+        var mergedParams = endpoint.parameters ?? [:]
+        parameters?.forEach { mergedParams[$0.key] = $0.value }
+        self.parameters = mergedParams.isEmpty ? nil : mergedParams
+        // merge endpoint.headers + passed headers
+        var mergedHeaders = endpoint.headers
+        headers.forEach { mergedHeaders[$0.key] = $0.value }
+        self.headers = mergedHeaders
     }
 }
-

@@ -1,132 +1,132 @@
-//
-//  APIService.swift
-//  TestApp
-//
-//  Created by Kate on 26.12.2024.
-//
+// Services/APIService.swift
 
 import Foundation
 
-enum APIServiceError: Error {
-    /// Сервер вернул пустой ответ
+/// Ошибки, которые может вернуть APIService
+public enum APIServiceError: Error {
     case emptyData
-    /// Неизвестная ошибка
-    case unknown
+    case decodingError(Error)
+    case networkError(NetworkError)
 }
 
-/// Сервис для работы со всеми основными ресурсами API
-final class APIService {
-    private let worker: NetworkingLogic
-    private let decoder = JSONDecoder()
-
-    init(worker: NetworkingLogic = BaseURLNetworking(baseURL: "http://localhost:3000/api/v1")) {
-        self.worker = worker
-        // decoder.dateDecodingStrategy = .iso8601
+/// Сервис для работы с основными ресурсами API
+public final class APIService {
+    public static let shared = APIService()
+    
+    private let networking = BaseURLNetworking(baseURL: "http://localhost:3000/api/v1")
+    private let decoder    = JSONDecoder()
+    
+    private init() {
+        // Если сервер отдаёт даты в ISO8601
+        decoder.dateDecodingStrategy = .iso8601
     }
-
-    /// Получение списка событий
+    
+    // MARK: — События
     func fetchEvents(
         page: Int,
-        completion: @escaping (Result<[Event], Error>) -> Void
+        completion: @escaping (Result<[Event], APIServiceError>) -> Void
     ) {
-        let endpoint = EntityEndpoint.events(page: page)
-        let request  = Request(endpoint: endpoint)
-        worker.execute(request: request) { result in
+        let ep  = EntityEndpoint.events(page: page)
+        let req = Request(endpoint: ep)
+        
+        networking.execute(request: req) { result in
             switch result {
-            case .failure(let netErr):
-                completion(.failure(netErr))
-            case .success(let serverResp):
-                guard let data = serverResp.data else {
-                    completion(.failure(APIServiceError.emptyData))
-                    return
+            case .failure(let err):
+                completion(.failure(.networkError(err)))
+                
+            case .success(let res):
+                guard let data = res.data else {
+                    completion(.failure(.emptyData)); return
                 }
                 do {
-                    let events = try self.decoder.decode([Event].self, from: data)
-                    completion(.success(events))
+                    let list = try self.decoder.decode([Event].self, from: data)
+                    DispatchQueue.main.async { completion(.success(list)) }
                 } catch {
-                    completion(.failure(error))
+                    DispatchQueue.main.async { completion(.failure(.decodingError(error))) }
                 }
             }
         }
     }
-
-    /// Получение списка встреч
+    
+    // MARK: — Встречи
     func fetchMeets(
         page: Int,
         userId: Int? = nil,
-        completion: @escaping (Result<[Meet], Error>) -> Void
+        completion: @escaping (Result<[Meet], APIServiceError>) -> Void
     ) {
-        let endpoint = EntityEndpoint.meets(page: page, userId: userId)
-        let request  = Request(endpoint: endpoint)
-        worker.execute(request: request) { result in
+        let ep  = EntityEndpoint.meets(page: page, userId: userId)
+        let req = Request(endpoint: ep)
+        
+        networking.execute(request: req) { result in
             switch result {
-            case .failure(let netErr):
-                completion(.failure(netErr))
-            case .success(let serverResp):
-                guard let data = serverResp.data else {
-                    completion(.failure(APIServiceError.emptyData))
-                    return
+            case .failure(let err):
+                completion(.failure(.networkError(err)))
+                
+            case .success(let res):
+                guard let data = res.data else {
+                    completion(.failure(.emptyData)); return
                 }
                 do {
-                    let meets = try self.decoder.decode([Meet].self, from: data)
-                    completion(.success(meets))
+                    let list = try self.decoder.decode([Meet].self, from: data)
+                    DispatchQueue.main.async { completion(.success(list)) }
                 } catch {
-                    completion(.failure(error))
+                    DispatchQueue.main.async { completion(.failure(.decodingError(error))) }
                 }
             }
         }
     }
-
-    /// Получение списка факультетов
+    
+    // MARK: — Факультеты
     func fetchFaculties(
         page: Int,
-        completion: @escaping (Result<[Faculty], Error>) -> Void
+        completion: @escaping (Result<[Faculty], APIServiceError>) -> Void
     ) {
-        let endpoint = EntityEndpoint.faculties(page: page)
-        let request  = Request(endpoint: endpoint)
-        worker.execute(request: request) { result in
+        let ep  = EntityEndpoint.faculties(page: page)
+        let req = Request(endpoint: ep)
+        
+        networking.execute(request: req) { result in
             switch result {
-            case .failure(let netErr):
-                completion(.failure(netErr))
-            case .success(let serverResp):
-                guard let data = serverResp.data else {
-                    completion(.failure(APIServiceError.emptyData))
-                    return
+            case .failure(let err):
+                completion(.failure(.networkError(err)))
+                
+            case .success(let res):
+                guard let data = res.data else {
+                    completion(.failure(.emptyData)); return
                 }
                 do {
-                    let faculties = try self.decoder.decode([Faculty].self, from: data)
-                    completion(.success(faculties))
+                    let list = try self.decoder.decode([Faculty].self, from: data)
+                    DispatchQueue.main.async { completion(.success(list)) }
                 } catch {
-                    completion(.failure(error))
+                    DispatchQueue.main.async { completion(.failure(.decodingError(error))) }
                 }
             }
         }
     }
-
-    /// Получение списка сообществ
+    
+    // MARK: — Сообщества
     func fetchCommunities(
         page: Int,
-        completion: @escaping (Result<[Community], Error>) -> Void
+        completion: @escaping (Result<[Community], APIServiceError>) -> Void
     ) {
-        let endpoint = EntityEndpoint.communities(page: page)
-        let request  = Request(endpoint: endpoint)
-        worker.execute(request: request) { result in
+        let ep  = EntityEndpoint.communities(page: page)
+        let req = Request(endpoint: ep)
+        
+        networking.execute(request: req) { result in
             switch result {
-            case .failure(let netErr):
-                completion(.failure(netErr))
-            case .success(let serverResp):
-                guard let data = serverResp.data else {
-                    completion(.failure(APIServiceError.emptyData))
-                    return
+            case .failure(let err):
+                completion(.failure(.networkError(err)))
+                
+            case .success(let res):
+                guard let data = res.data else {
+                    completion(.failure(.emptyData)); return
                 }
                 do {
-                    let communities = try self.decoder.decode([Community].self, from: data)
-                    completion(.success(communities))
+                    let list = try self.decoder.decode([Community].self, from: data)
+                    DispatchQueue.main.async { completion(.success(list)) }
                 } catch {
-                    completion(.failure(error))
+                    DispatchQueue.main.async { completion(.failure(.decodingError(error))) }
                 }
             }
         }
     }
 }
-
